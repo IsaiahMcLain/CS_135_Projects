@@ -1,0 +1,420 @@
+/* -----------------------------------------------------------------------------
+
+FILE:              Math_Testor.cpp
+DESCRIPTION:       Program that will test user based on 5th grade level arithmatic. 
+COMPILER:          MinGW  C++ compiler
+NOTES:             N/A
+
+MODIFICATION HISTORY:
+Author             Date               Version
+---------------    ----------         --------------
+Isaiah McLain      2019-10-29         1.0, code written out with header for file
+									  and function as well as program code. 
+Isaiah McLain      2019-10-31 		  1.1, Added interactive ability for student to
+									  enter answer and program checks if it is wrong
+									  or right and made the program more modular. 
+Isaiah McLain      2019-10-31		  1.2, Made program even more modular and also 
+									  created a functioning menu with a working quit option,
+									  and problem options with pass by reference.
+Isaiah McLain      2019-11-5          1.3, Made minor edits to text output and format. 
+Isaiah McLain      2019-11-5          2.0, Edited program to fit the new project 2 requirements
+									  including updated menu, display time, difficulty level added,
+									  as well as a function that gets the name of the user. 
+----------------------------------------------------------------------------- */
+
+#include <iostream>  //Enables use of cout and cin operators 
+#include <iomanip>   //Enables program to function 
+#include <string>    //Allows use of string functions
+#include <ctime>     //Allows use of time stamping program 
+
+using namespace std;
+
+const string PROGRAMMER_NAME = "Isaiah McLain";		// Global constant
+//Prototypes 
+void Number_Generator(int&, int&, int);  //Initilizes the creation of two random numbers function 
+void Difficulty_Chooser(int&); //Initilizes the difficulty chooser function 
+int Random_Addition(int);  //Initilizes addition of two random numbers function
+int Random_Subtraction(int); //Initilizes the subtraction of two random numbers function
+int Random_Multiplication(int); //Initilizes the multiplication of two random numbers function 
+int Random_Division(int);    //Initilizes the division of two random numbers function
+int Answer_Checker(int, int);  //Initilizes Answer_Checker function with the two arguments it 
+							   //needs to check
+void Get_User_Name();      //Initilizes Get_User_Name function 
+char Get_Choice();      //Initilizes the Get_Choice function
+						
+/* -----------------------------------------------------------------------------
+FUNCTION:          main()
+DESCRIPTION:       Function that will call all the other functions of the program.  
+RETURNS:           0
+NOTES:             Holds program open through a loop and works coherently with Get_Choice
+				   to let the menu function properly. 				
+------------------------------------------------------------------------------- */
+int main()
+{
+	char (choice); //Initilizes the choice variable from Get_Choice
+	bool loop;   //Sets var loop to be a bool value
+	int difficulty; 
+	time_t seed = time(0);  //Sets variable seed to the time c++ was made
+	srand(seed); //Generates random numbers 
+
+	loop = 1; //Set loop value to 1 so loop will continue on until changed. 
+	
+	cout << ctime(&seed) << endl; //Displays the current time that the program was run to the user
+	
+	Get_User_Name();  //Will get the user name 
+	cout << endl << endl; 
+	Difficulty_Chooser(difficulty); //Calls Difficulty function that lets user choose difficulty level 
+
+
+	while (loop) //Loop that will hold open menu and let user access other funtions. 
+	{
+		choice = Get_Choice();
+		switch(choice)
+		{
+			case 'a': //Lets user access addition 
+				Random_Addition(difficulty); //Calls Random_Addition function 
+				break;
+			case 'b': //Lets user access subtraction
+				Random_Subtraction(difficulty); //Calls Random_Subtraction function 
+				break; 
+			case 'c': //Lets user access multiplication 
+				Random_Multiplication(difficulty); //Calls Random_Multiplication function 
+				break;
+			case 'd': //Lets user access division 
+				Random_Division(difficulty); //Calls Random_Division function 
+				break;
+			case 'q': //Lets user quit program
+				cout << "Thank you for using the program.\n"
+				"Goodbye." << endl << endl; 
+				loop = 0; //Sets loop vvariable to 0 so program quits. 
+				break;
+		}
+	}
+	cout << "Programmed by: " << PROGRAMMER_NAME << " -- ";  //Displays programmer name and program compile date. 
+	cout << __DATE__ << "  " __TIME__ << endl;
+	cout << endl;
+
+	system("pause"); //Pauses system 
+
+	return 0; //Returns value 0 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Get_User_Name
+DESCRIPTION:       Function that prompts user for their name.  
+RETURNS:           Nothing (void) 
+NOTES:             N/A
+------------------------------------------------------------------------------- */
+void Get_User_Name()
+{ 
+	string fullname; //String variable that will hold user's first and last name 
+	cout << "Please enter your first and last name" << endl; 
+	getline(cin, fullname); //Gets user's first and last name. 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Difficulty_Chooser
+DESCRIPTION:       Function that prompts user for the difficulty they want.   
+RETURNS:           Nothing (void) 
+NOTES:             Bases numbers size used for equation off of this function.
+------------------------------------------------------------------------------- */
+void Difficulty_Chooser(int &difficulty)
+{
+	cout << "Please enter the difficulty you would like to try" << endl; //Prompts user for difficulty choice
+	cout << "1. 1 digit" << endl; //Next few statements tells user what the difficulty level entails 
+	cout << "2. 2 digits" << endl;
+	cout << "3. 3 digits" << endl; 
+	cout << "4. 4 digits" << endl;
+	cout << "5. 5 digits" << endl;
+	cout << "------------------" << endl; 
+
+	cin >> difficulty; //Stores users difficulty choice 
+	cout << endl;
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Get_Choice 
+DESCRIPTION:       Function that displays the menu to the user and prompts them to choose a problem.  
+RETURNS:           0
+NOTES:             Will return choice to main and allow the program to then run based on user's 
+				   desicion. 
+------------------------------------------------------------------------------- */
+char Get_Choice()
+{
+	char choice;   //Initilzies user's choice holding variable 
+	cin.clear();  //Stops program from looping infinetly if user inputs improper value.
+
+	cout << "          ARITHMETIC PRACTICE PROGRAM" << endl << endl;   //Menu that prompts user for choice 
+	cout << "Welcome to the Math Skills Practice Program." << endl << endl;
+	cout << "This program allows you to practice your math skills." << endl << endl;
+	cout << "Choose what to practice in the menu shown below." << endl << endl; 
+	cout << "---------------------------------------------------------" << endl;
+	cout << "                ARITHMETIC PRACTICE PROGRAM" << endl;
+	cout << "                       MAIN   MENU" << endl;
+	cout << "---------------------------------------------------------" << endl;
+	cout << "                a.   Addition" << endl;
+	cout << "                b.   Subtraction" << endl;
+	cout << "                c.   Multiplication" << endl;
+	cout << "                d.   Division" << endl;
+	cout << "                q.   Quit the program" << endl << endl;
+	cout << "---------------------------------------------------------" << endl << endl;
+	cout << "Enter your choice [ a b c d q ]: "; 
+	cin >> choice;     //Stores user's choice 
+	cout << endl; 
+
+	choice = tolower(choice); //In case user inputs upper case letters 
+
+	/*Logic that will enable program to recognize incorrect input and tell the user to input a
+	  correct value */
+	if (choice >= 'a' && choice <= 'd' || choice == 'q')
+		cout << "You entered: '" << choice << "', that is correct input." << endl;
+	else
+	{
+		cout << "You did not enter 'a', 'b', 'c', 'd' or 'q'." << endl; //Only used if user inputs
+		cout << "Please return the program." << endl;		  // a incorrect number
+	}
+
+    return choice; //Returns user's choice to main which enables menu to function 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Number_Generator()
+DESCRIPTION:       Function that will create random numbers for other funtions when called.   
+RETURNS:           nothing (void)
+NOTES:             N/A				
+------------------------------------------------------------------------------- */
+void Number_Generator(int &value_1, int &value_2, int difficulty)
+{
+	//int difficulty;  //Variable that holds difficulty level user chooses 
+	int Min_Value;   //Variable that holds range of numbers dependent on difficulty level, lowest range
+	int Max_Value;   //Variable that holds range of numbers dependent on difficulty level, highest range	
+	int range;      //Variable that will hold the range of the max and min values for srand. 
+	int range_1;    //Variable that will hold the range of the max and min values for srand for 2nd value. 
+
+
+	//If logic that runs to determine max and min variables based off the user's difficulty choice.
+	
+	if (difficulty == 1)
+	{
+		Min_Value = 1;
+		Max_Value = 9;
+	}
+	
+	if (difficulty == 2)
+	{
+		Min_Value = 10; 
+		Max_Value = 99;
+	}
+
+	if (difficulty == 3)
+	{
+		Min_Value = 100;
+		Max_Value = 999;
+	}
+	
+	if (difficulty == 4)
+	{
+		Min_Value = 1000;
+		Max_Value = 9999;
+	}
+
+	if (difficulty == 5)
+	{
+		Min_Value = 10000;
+		Max_Value = 99999;
+	}
+
+	range = (rand() % (Max_Value - Min_Value + 1)) + Min_Value; //Equation that sets range for srand 
+	range_1 = (rand() % (Max_Value - Min_Value + 1)) + Min_Value; //Equation that sets range for srand for
+	
+	value_1 = range; //Sets first range value to value_1 saving the random number for the addition equation. 
+	value_2 = range_1;//Sets second range value to value_2 saving the random number for the addition equation. 
+
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Random_Addition 
+DESCRIPTION:       Function that will add two random numbers together. 
+RETURNS:           0
+NOTES:             Shows two generated numbers being added and will not show user answer until
+				   they hit enter so that they can practice their addition. 
+------------------------------------------------------------------------------- */
+int Random_Addition(int difficulty) 
+{ 
+	int answer;     //Variable that will hold the answer of the two added srand values. 
+	int user_choice;    //Variable that will store users answer
+	int value_1;    //Variable that will hold and save the set srand value of the program
+	int value_2;    //Variable that will hold and save the set srand value of the program
+
+	Number_Generator(value_1, value_2, difficulty); //Calls number generator 
+
+	cout << " " << value_1 << endl; //Displays first random number
+	cout << "+" << value_2 << endl; //Displaus second random number 
+	cout << "------" << endl;
+	cout << "Please enter your answer" << endl; //Prompts user to enter answer
+	cin >> user_choice; //User enters answer 
+	cout << endl; 
+    
+	answer = value_1 + value_2;  //Runs equation that will add two generated numbers 
+	
+	Answer_Checker(user_choice, answer);  //Calls Answer Checker function that will determine if answer is correct.
+	
+	cout << " " << value_1 << endl; //Displays first random number
+	cout << "+" << value_2 << endl; //Displaus second random number 
+	cout << "------" << endl;
+	cout << answer << endl;     //Displays answer 
+
+	return 0; 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Random_Subtraction 
+DESCRIPTION:       Function that will subtract two random numbers. 
+RETURNS:           0 
+NOTES:             Shows two generated numbers being subtracted and will not show user answer until
+				   they hit enter so that they can practice their subtraction. Will also not output
+				   a negative answer
+------------------------------------------------------------------------------- */
+int Random_Subtraction(int difficulty) 
+{ 
+	int answer;     //Variable that will hold the answer of the two added srand values. 
+	int user_choice;    //Variable that will store users answer
+	int value_1;    //Variable that will hold and save the set srand value of the program
+	int value_2;    //Variable that will hold and save the set srand value of the program
+
+	Number_Generator(value_1, value_2, difficulty); //Calls number generator 
+
+	/*Runs logic to determine if value being subtracted is smaller than subtracting value.
+	  If it is, the if statement will reverse the values in the order they are subtracted 
+	  so no negative answers occur. */  
+
+	if (value_1 < value_2) //Switches display since numbers swapped 
+	{
+		answer = value_2 - value_1; //Swapped equation 
+	
+		cout << " " << value_2 << endl; //Displays first random number
+		cout << "-" << value_1 << endl; //Displaus second random number 
+		cout << "------" << endl;
+		cout << "Please enter your answer" << endl; //Prompts user to enter answer
+	}
+	else //Leaves numbers and equation the same 
+	{	
+		answer = value_1 - value_2;  //Runs equation that will subtract two generated numbers 
+
+		cout << " " << value_1 << endl; //Displays first random number
+		cout << "-" << value_2 << endl; //Displaus second random number 
+		cout << "------" << endl;
+		cout << "Please enter your answer" << endl; //Prompts user to enter answer
+	}
+	
+	cin >> user_choice; //User enters answer 
+	cout << endl; 
+	
+	Answer_Checker(user_choice, answer);  //Calls Answer Checker function that will determine if answer is correct.
+	
+	if (value_1 < value_2) //Same logic but answer included 
+	{
+		cout << " " << value_2 << endl; //Displays first random number
+		cout << "-" << value_1 << endl; //Displaus second random number 
+		cout << "------" << endl;
+		cout << answer << endl;     //Displays answer 
+	}
+	else //Same logic but answer is included 
+	{
+		cout << " " << value_1 << endl; //Displays first random number
+		cout << "-" << value_2 << endl; //Displaus second random number 
+		cout << "------" << endl;
+		cout << answer << endl;     //Displays answer 
+	}
+
+	return 0; 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Random_Multiplication  
+DESCRIPTION:       Function that will multiply two random numbers. 
+RETURNS:           0 
+NOTES:             Shows two generated numbers being multiplied and will not show user answer until
+				   they hit enter so that they can practice their multiplication.
+------------------------------------------------------------------------------- */
+int Random_Multiplication(int difficulty)
+{
+	int answer;     //Variable that will hold the answer of the two added srand values. 
+	int user_choice;    //Variable that will store users answer
+	int value_1;    //Variable that will hold and save the set srand value of the program
+	int value_2;    //Variable that will hold and save the set srand value of the program
+
+	Number_Generator(value_1, value_2, difficulty); //Calls number generator 
+
+	answer = value_1 * value_2;  //Runs equation that will multiply two generated numbers 
+
+	cout << " " << value_1 << endl; //Displays first random number
+	cout << "*" << value_2 << endl; //Displaus second random number 
+	cout << "------" << endl;
+	cout << "Please enter your answer" << endl; //Prompts user to enter answer
+	cin >> user_choice; //User enters answer 
+	cout << endl; 
+	
+	Answer_Checker(user_choice, answer);  //Calls Answer Checker function that will determine if answer is correct.
+	
+	cout << " " << value_1 << endl; //Displays first random number
+	cout << "*" << value_2 << endl; //Displaus second random number 
+	cout << "------" << endl;
+	cout << answer << endl;     //Displays answer 
+
+	return 0; 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Random_Division  
+DESCRIPTION:       Function that will divide two random numbers. 
+RETURNS:           0 
+NOTES:             Shows two generated numbers being divide and will not show user answer until
+				   they hit enter so that they can practice their division.
+------------------------------------------------------------------------------- */
+int Random_Division(int difficulty)
+{
+	int answer;     //Variable that will hold the answer of the two added srand values. 
+	int user_choice;    //Variable that will store users answer
+	int value_1;    //Variable that will hold and save the set srand value of the program
+	int value_2;    //Variable that will hold and save the set srand value of the program
+	int dividend;   //Variable that will hold the value that is being divided 
+	Number_Generator(value_1, value_2, difficulty); //Calls number generator 
+
+	dividend = value_1 * value_2; //Runs equation that will divide two generated numbers to create the dividend
+								  //eliminating remainder answers. 
+	answer = dividend / value_1;  //Takes dividend divided by value 1 to get the answer
+
+
+	cout << dividend << " / " << value_1  << endl; //Displays divison equation 
+	cout << "------" << endl;
+	cout << "Please enter your answer" << endl; //Prompts user to enter answer
+	cin >> user_choice; //User enters answer 
+	cout << endl; 
+
+	Answer_Checker(user_choice, answer);  //Calls Answer Checker function that will determine if answer is correct.
+	
+	cout << dividend << " / " << value_1  << endl;
+	cout << "------" << endl;
+	cout << answer << endl;     //Displays answer 
+
+	return 0; 
+}
+
+/* -----------------------------------------------------------------------------
+FUNCTION:          Answer_Checker 
+DESCRIPTION:       Function that will check users input and determine if answer is correct. 
+RETURNS:           0 
+NOTES:             N/A
+------------------------------------------------------------------------------- */
+int Answer_Checker(int user_choice, int answer) //Function arguments passed from any math problem function 
+{ 
+	if (user_choice == answer) //Runs logic to see if user's choice or answer is = to programs answer
+	{
+		cout << "Congratulations! That's right." << endl; //Tells user if it's correct
+	}
+	else 
+		cout << "That is incorrect" << endl;  //Tells user if it's incorrect
+	
+	return 0;
+}
